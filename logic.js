@@ -94,8 +94,10 @@ quakes = []
 })
 
   var quake_heat = L.heatLayer(quakes, {
-    radius: 30,
-    blur: 50
+  	minOpacity: 0.1,
+    blur: 20,
+    maxZoom: 7,
+    radius: 15
   })
 
 

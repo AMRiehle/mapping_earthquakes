@@ -133,7 +133,7 @@ legend.onAdd = function (map) {
     for (var i = 0; i < grades.length; i++) {
         div.innerHTML +=
             '<li style="list-style: none"><i style="background:' + getColor(grades[i] + 1) + '"</li></i><li style="list-style: none">' +
-            grades[i] + (grades[i + 1] ? '&ndash;' + grades[i + 1] + '</li>' : '+');
+            grades[i] + (grades[i + 1] ? '&ndash;' + grades[i + 1] + '</li></br>' : '+');
     }
 
     return div;

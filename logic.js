@@ -16,7 +16,8 @@ function timeConverter(UNIX_timestamp){
   return a
 }
 
-earthquakesURL = "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_month.geojson"
+earthquakesURL = "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_week.geojson"
+quakeheatURL = "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_month.geojson"
 tectonicURL = "https://raw.githubusercontent.com/fraxen/tectonicplates/master/GeoJSON/PB2002_boundaries.json"
 volcanoesURL = "https://data.humdata.org/dataset/a60ac839-920d-435a-bf7d-25855602699d/resource/7234d067-2d74-449a-9c61-22ae6d98d928/download/volcano.json"
 
@@ -84,20 +85,35 @@ d3.json(tectonicURL, function(tectonicData) {
 }
   }
 
+d3.json(quakeheatURL, function(quakeData) {
+quakes = []
+  var quake = L.geoJSON(quakeData, {
+    onEachFeature: function (feature) {
+    	quakes.push([feature.geometry.coordinates[1], feature.geometry.coordinates[0]])
+}
+})
+
+  var quake_heat = L.heatLayer(quakes, {
+    radius: 30,
+    blur: 50
+  })
+
+
   var myMap = L.map("map", {
 	center: [
       38.9, -77
     ],
     zoom: 3,
-    layers: [satellitemap, earthquakes, tectonics],
+    layers: [lightmap, earthquakes, quake_heat, tectonics],
     timeDimension: true,
     timeDimensionControl: true,
   });
 
   var overlayMaps = {
-  	"Earthquakes": earthquakes,
+  	"This Week's Earthquakes": earthquakes,
     "Tectonic Plates": tectonics,
-    "Volcanoes": volcanoes
+    "Volcanoes": volcanoes,
+    "Common Earthquake Locations": quake_heat
   }
 
 	L.control.layers(baseMaps, overlayMaps, {collapsed:false}).addTo(myMap);
@@ -109,7 +125,7 @@ legend.onAdd = function (map) {
     var div = L.DomUtil.create('div', 'info legend'),
         grades = [0, 1, 2, 3, 4, 5],
         labels = [];
-        div.innerHTML = '<h3 style="text-align: center; margin-left: 8px;">Earthquake</br>Magnitude</h3>'
+        div.innerHTML = "<h3 style='text-align: center; margin-left: 8px;'>Magnitude</br>of This Week's</br>Earthquakes</h3>"
 
     // loop through our density intervals and generate a label with a colored square for each interval
     for (var i = 0; i < grades.length; i++) {
@@ -123,6 +139,7 @@ legend.onAdd = function (map) {
 
 legend.addTo(myMap);
 
+})
 })
 })
 })
